@@ -1,221 +1,1016 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Netlify</title><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#ffffff"/><meta name="google-site-verification" content="G4JqDTXMHpDyWoqIRwgw8PBqg-AncXqtdkHehcOR7kc"/><meta name="description" content="Start building the best web experiences in record time"/><meta name="slack-app-id" content="A05P27DR8C8"/><link rel="preconnect" href="https://api.commandbar.com" crossorigin/><link rel="preconnect" href="https://featureflags.netlify.com" crossorigin/><link rel="preconnect" href="https://screenshot-proxy.netlify.app" crossorigin/><script src="https://www.google.com/recaptcha/enterprise.js?render=6LexhEgsAAAAANL6JPUnOx6lWZViw8-TBON3_faT" async defer="defer" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><link rel="apple-touch-icon" sizes="180x180" href="https://www.netlify.com/v3/static/favicon/apple-touch-icon.png"/><link rel="icon" type="image/x-icon" href="/favicon.ico"/><link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/><link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png"/><link href="/style/3158.css" rel="stylesheet"/><link href="/style/app.css" rel="stylesheet"/></head><body><svg style="bottom: 0; position: absolute; z-index: -1" aria-hidden="true"><defs><symbol id="netlify-logomark" viewBox="0 0 128 128"><path style="transition: fill 200ms ease-out" fill="var(--logoDiamond)" d="m125.2 54.8-52-52L71.3.9 69.2 0H58.8l-2.1.9-1.9 1.9-52 52-1.9 1.9-.9 2.1v10.3l.9 2.1 1.9 1.9 52 52 1.9 1.9 2.1.9h10.3l2.1-.9 1.9-1.9 52-52 1.9-1.9.9-2.1V58.8l-.9-2.1-1.8-1.9z"/><path style="transition: fill 200ms ease-out" fill="var(--logoN)" d="M78.9 80.5H71l-.7-.7V61.3c0-3.3-1.3-5.9-5.3-6-2-.1-4.4 0-6.9.1l-.4.4v24l-.7.7h-7.9l-.7-.7V48.1l.7-.7H67c6.9 0 12.6 5.6 12.6 12.6v19.8l-.7.7z"/><path style="transition: fill 200ms ease-out" fill="var(--logoSpark)" d="m38.4 30.8 7.3 7.3v5.8l-.8.8h-5.8l-7.3-7.3v-1.1l5.5-5.5h1.1zm.2 37.2v-8l-.7-.7h-28l-.7.7v8l.7.7H38l.6-.7zm.5 15.7L31.8 91v1.1l5.5 5.5h1.1l7.3-7.3v-5.8l-.8-.8h-5.8zM60 11.3l-.6.7v25l.7.7H68l.7-.7V12l-.7-.7h-8zm0 79.1-.7.7v25l.7.7h8l.7-.7v-25l-.7-.7h-8zm58.1-31h-28l-.7.6v8l.7.7h28.1l.7-.7v-8l-.8-.6z"/></symbol><symbol id="netlify-logo" viewBox="0 0 48 48"><use href="#netlify-logomark"/></symbol><symbol id="netlify-logo-mono" viewBox="0 0 48 48"><use href="#netlify-logomark"/></symbol></defs></svg><style>:root {
-        --logoDiamond: none;
-        --logoN: rgb(var(--colorRgbFacetsTeal800));
-        --logoSpark: rgb(var(--colorRgbFacetsTeal400));
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BloodLife — Donate Blood, Save Lives</title>
+  <meta name="description" content="A modern blood donation website with donor registration, blood request form, and donor search." />
+
+  <style>
+    :root{
+      --bg:#fff7f7;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --primary:#d62828;
+      --primary-dark:#b91c1c;
+      --accent:#fef2f2;
+      --line:#f1d5d5;
+      --shadow: 0 18px 45px rgba(122, 20, 20, 0.12);
+      --radius: 22px;
+      --radius-sm: 14px;
+    }
+
+    *{ box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(214,40,40,0.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(214,40,40,0.08), transparent 24%),
+        linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    img{ max-width:100%; display:block; }
+
+    .container{
+      width:min(1180px, calc(100% - 32px));
+      margin:0 auto;
+    }
+
+    .nav{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter: blur(16px);
+      background: rgba(255,255,255,.78);
+      border-bottom:1px solid rgba(214,40,40,.10);
+    }
+    .nav-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px 0;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .brand-mark{
+      width:42px; height:42px;
+      border-radius:14px;
+      display:grid; place-items:center;
+      background:linear-gradient(135deg, var(--primary), #ff6b6b);
+      color:#fff;
+      box-shadow: 0 12px 24px rgba(214,40,40,.28);
+      font-size:20px;
+    }
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:20px;
+      color:var(--muted);
+      font-weight:600;
+    }
+    .nav-links a:hover{ color:var(--primary); }
+
+    .hero{
+      padding:64px 0 28px;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:28px;
+      align-items:stretch;
+    }
+    .hero-card{
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.82));
+      border:1px solid rgba(214,40,40,.10);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-left{
+      padding:42px;
+      position:relative;
+      min-height: 520px;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:var(--accent);
+      border:1px solid rgba(214,40,40,.14);
+      color:var(--primary-dark);
+      padding:10px 14px;
+      border-radius:999px;
+      font-size:14px;
+      font-weight:700;
+    }
+    h1{
+      margin:18px 0 14px;
+      font-size: clamp(2.4rem, 5vw, 4.8rem);
+      line-height:1.03;
+      letter-spacing:-.04em;
+    }
+    .lead{
+      font-size:1.05rem;
+      color:var(--muted);
+      line-height:1.75;
+      max-width: 60ch;
+      margin:0 0 24px;
+    }
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:24px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:700;
+      border-radius:999px;
+      padding:14px 18px;
+      transition:.2s ease;
+      text-decoration:none;
+      user-select:none;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg, var(--primary), #ff4d4d);
+      color:#fff;
+      box-shadow: 0 14px 28px rgba(214,40,40,.25);
+    }
+    .btn-primary:hover{ transform: translateY(-1px); background:linear-gradient(135deg, var(--primary-dark), var(--primary)); }
+    .btn-secondary{
+      background:#fff;
+      color:var(--primary-dark);
+      border:1px solid rgba(214,40,40,.16);
+    }
+    .btn-secondary:hover{ border-color: rgba(214,40,40,.28); transform: translateY(-1px); }
+
+    .hero-stats{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:14px;
+      margin-top: 26px;
+    }
+    .stat{
+      background: rgba(255,255,255,.9);
+      border:1px solid rgba(214,40,40,.10);
+      border-radius: 18px;
+      padding:16px;
+    }
+    .stat strong{
+      display:block;
+      font-size:1.45rem;
+      color:var(--primary-dark);
+      margin-bottom:4px;
+    }
+    .stat span{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .hero-right{
+      padding:26px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(circle at top, rgba(214,40,40,.18), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,248,248,.96));
+    }
+    .hero-art{
+      width:100%;
+      max-width:390px;
+      border-radius: 28px;
+      background: linear-gradient(180deg, #fff, #fff7f7);
+      border:1px solid rgba(214,40,40,.12);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero-art-top{
+      padding:24px;
+      background: linear-gradient(135deg, rgba(214,40,40,.10), rgba(255,255,255,0));
+    }
+    .drop{
+      width:74px; height:74px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: linear-gradient(135deg, var(--primary), #ff6b6b);
+      margin-bottom:18px;
+      position:relative;
+      box-shadow: 0 12px 24px rgba(214,40,40,.22);
+    }
+    .drop::after{
+      content:"♥";
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      transform: rotate(45deg);
+      color:#fff;
+      font-size:1.35rem;
+      font-weight:800;
+    }
+    .hero-art h3{
+      margin:0 0 8px;
+      font-size:1.4rem;
+    }
+    .hero-art p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+    }
+    .pulse-list{
+      padding:0 24px 24px;
+      display:grid;
+      gap:12px;
+    }
+    .pulse-item{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:#fff;
+      border:1px solid rgba(214,40,40,.10);
+      border-radius: 16px;
+      padding:14px 16px;
+    }
+    .pulse-dot{
+      width:12px; height:12px;
+      border-radius:999px;
+      background:var(--primary);
+      box-shadow:0 0 0 8px rgba(214,40,40,.12);
+      flex:0 0 auto;
+    }
+    .pulse-item b{ display:block; margin-bottom:2px; }
+    .pulse-item small{ color:var(--muted); }
+
+    .section{
+      padding: 18px 0 64px;
+    }
+    .section-head{
+      display:flex;
+      align-items:end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:20px;
+    }
+    .section-head h2{
+      margin:0;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      letter-spacing:-.03em;
+    }
+    .section-head p{
+      margin:0;
+      color:var(--muted);
+      max-width: 62ch;
+      line-height:1.7;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:20px;
+    }
+    .grid-3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:18px;
+    }
+
+    .panel{
+      background:var(--card);
+      border:1px solid rgba(214,40,40,.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel-inner{
+      padding:24px;
+    }
+
+    .form-row{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:12px;
+    }
+    .field{
+      display:grid;
+      gap:7px;
+      margin-bottom:12px;
+    }
+    label{
+      font-size:.92rem;
+      color:#374151;
+      font-weight:700;
+    }
+    input, select, textarea{
+      width:100%;
+      border:1px solid #ead1d1;
+      background:#fff;
+      color:var(--text);
+      border-radius: 14px;
+      padding:14px 15px;
+      outline:none;
+      font:inherit;
+      transition:.2s ease;
+    }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(214,40,40,.45);
+      box-shadow: 0 0 0 4px rgba(214,40,40,.08);
+    }
+    textarea{ min-height: 120px; resize: vertical; }
+
+    .helper{
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.6;
+      margin:10px 0 0;
+    }
+
+    .donor-tools{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .searchbar{
+      flex:1 1 280px;
+      display:flex;
+      gap:10px;
+    }
+    .searchbar input{
+      flex:1;
+      margin:0;
+    }
+
+    .chip-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .chip{
+      border:1px solid rgba(214,40,40,.14);
+      background:#fff;
+      color:var(--primary-dark);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.92rem;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    .chip:hover, .chip.active{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:#fff;
+    }
+
+    .donor-card{
+      border:1px solid rgba(214,40,40,.10);
+      background:linear-gradient(180deg, #fff, #fffafa);
+      border-radius: 22px;
+      padding:18px;
+      box-shadow: 0 10px 24px rgba(122, 20, 20, 0.08);
+      transition:.2s ease;
+    }
+    .donor-card:hover{ transform: translateY(-3px); }
+    .donor-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .avatar{
+      width:52px; height:52px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-weight:900;
+      background:linear-gradient(135deg, var(--primary), #ff7b7b);
+    }
+    .blood-pill{
+      background:var(--accent);
+      color:var(--primary-dark);
+      border:1px solid rgba(214,40,40,.12);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:.9rem;
+    }
+    .donor-card h3{
+      margin:0;
+      font-size:1.1rem;
+    }
+    .meta{
+      display:grid;
+      gap:8px;
+      color:var(--muted);
+      font-size:.95rem;
+      line-height:1.6;
+    }
+    .meta b{ color:var(--text); }
+
+    .notice{
+      background: linear-gradient(135deg, var(--primary), #ff5c5c);
+      color:#fff;
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 40px rgba(214,40,40,.22);
+    }
+    .notice h3{
+      margin:0 0 8px;
+      font-size:1.35rem;
+    }
+    .notice p{
+      margin:0 0 16px;
+      line-height:1.7;
+      opacity:.95;
+    }
+    .notice .btn-secondary{
+      border:none;
+      background:#fff;
+    }
+
+    .faq{
+      display:grid;
+      gap:12px;
+    }
+    details{
+      background:#fff;
+      border:1px solid rgba(214,40,40,.10);
+      border-radius:18px;
+      padding:16px 18px;
+      box-shadow: 0 8px 20px rgba(122, 20, 20, 0.06);
+    }
+    summary{
+      cursor:pointer;
+      font-weight:800;
+      color:#111827;
+    }
+    details p{
+      color:var(--muted);
+      line-height:1.7;
+      margin:12px 0 0;
+    }
+
+    .footer{
+      padding:26px 0 40px;
+      color:var(--muted);
+      text-align:center;
+      border-top:1px solid rgba(214,40,40,.10);
+    }
+
+    .toast{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      background:#111827;
+      color:#fff;
+      padding:14px 16px;
+      border-radius:14px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.18);
+      transform: translateY(18px);
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:100;
+      max-width:min(340px, calc(100vw - 36px));
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 980px){
+      .hero-grid, .grid-2, .grid-3{
+        grid-template-columns: 1fr;
       }
-      .tw-dark {
-        --logoN: rgb(var(--colorRgbFacetsNeutralDark000));
-        --logoSpark: rgb(var(--colorRgbFacetsTeal200));
+      .hero-left{ min-height:auto; }
+      .nav-links{ display:none; }
+      .section-head{
+        flex-direction:column;
+        align-items:start;
       }
-      #netlify-logo-mono {
-        --logoN: currentColor;
-        --logoSpark: currentColor;
-      }</style><div id="root" tabindex="-1"></div><div hidden><span id="open-in-new-tab">Opens in a new tab</span></div><script nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy">// crypto.randomUUID() polyfill
-      (() => {
-        if (
-          window.crypto &&
-          typeof window.crypto.randomUUID !== 'function' &&
-          typeof window.crypto.getRandomValues === 'function' &&
-          typeof Uint8Array === 'function'
-        ) {
-          function randomUUID() {
-            const callback = (c) => {
-              const num = Number(c);
-              return (
-                num ^
-                (window.crypto.getRandomValues(new Uint8Array(1))[0] &
-                  (15 >> (num / 4)))
-              ).toString(16);
-            };
-            return '10000000-1000-4000-8000-100000000000'.replace(
-              /[018]/g,
-              callback
-            );
-          }
-          console.log('Polyfilling crypto.randomUUID()');
-          window.crypto.randomUUID = randomUUID;
-        }
-      })();</script><script nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy">// preload the critical path fetch requests that the app
-      // loads (some in a serial fashion) during bootstrap
-      (() => {
-        // we are confident the user is authenticated
-        // if we have the auth cookie hint.
-        if (document.cookie.includes('_nf-auth-hint')) {
-          // ParallelData allows for async loading and handoff to the app. It also
-          // allows us to pull data from a parallel loaded request to use to make other
-          // parallel requests.
-          // This is the fetch-only version (does not include XHR parallel loading)
-          // ParallelData v1.3.0 - https://github.com/sean-roberts/parallel-data
-          // prettier-ignore
-          !function(){"use strict";var e="ParallelData";function t(){try{for(var t,r=arguments.length,n=Array(r),o=0;o<r;o++)n[o]=arguments[o];(t=console).error.apply(t,[e].concat(n))}catch(e){}}function r(e,t){return Object.assign.apply(Object,arguments)}var n={},o={},a={},c=function(e,t){return e.toUpperCase()+"-"+t},i=function(){};i=function(e,n,i){var l=c(e,n);if(!o[l])var u=o[l]=fetch(n,r({},i,{__PDFetch__:!0,method:e,headers:r({},a.headers,i.headers||{}),credentials:i.credentials||"include",redirect:i.redirect||"follow"})).then(function(e){return i&&i.onParallelDataResponse&&i.onParallelDataResponse(e.clone(),{transferredToApp:!!u.__PDConsumed__}),e}).catch(function(e){throw t("fetch request failed",e),e})},window.ParallelData={version:"1.3.0",configure:function(e){var t;(e=e||{}).allRequests&&(t=e.allRequests,a=r({},a,t||{}))}},window.ParallelData.getForFetch=function(e,r){r=r||{};try{"fetch"in window&&"Promise"in window&&i("GET",e,r)}catch(e){t("fetch request failed",e)}},function(){try{var e=window.fetch;if(!e||!window.Promise)return;window.fetch=function(t,r){t=t||{},r=r||{};var a=void 0;"string"==typeof t?a=t:t.url&&(a=t.url);var i=function(e,t){if(e&&e.method&&e.url){var r=c(e.method,e.url);return"xhr"===t?n[r]:o[r]}}({method:r.method?r.method:t.method?t.method:"GET",url:a},"fetch");return r.__PDFetch__||!i||i.__PDConsumed__?e.apply(window,arguments):(i.__PDConsumed__=!0,i)}}catch(e){t("failed to run fetchInterceptor",e)}}()}();
-          // These requests were chosen because they were the most common critical path
-          // requests across all pages
-          ParallelData.getForFetch('/access-control/bb-api/api/v1/user');
-          ParallelData.getForFetch(
-            '/access-control/bb-api/api/v1/accounts?minimal=true'
-          );
-          ParallelData.getForFetch(
-            '/access-control/bb-api/api/v1/organizations'
-          );
-          ParallelData.getForFetch('/.netlify/builders/notifications');
-        }
-      })();</script><script nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy">if (
-        window.location.host === 'app.netlify.com' ||
-        window.location.search.includes('force-load-segment')
-      ) {
-        // Segment snippet
-        // running snippet here because it will set up the initial mocked
-        // methods/properties for immediate use but we call analytics.load() later after the
-        // page has loaded so that segment is out of the critical path
-        // prettier-ignore
+    }
 
-        !function(){var i="analytics",analytics=window[i]=window[i]||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","screen","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware","register"];analytics.factory=function(e){return function(){if(window[i].initialized)return window[i][e].apply(window[i],arguments);var n=Array.prototype.slice.call(arguments);if(["track","screen","alias","group","page","identify"].indexOf(e)>-1){var c=document.querySelector("link[rel='canonical']");n.push({__t:"bpc",c:c&&c.getAttribute("href")||void 0,p:location.pathname,u:location.href,s:location.search,t:document.title,r:document.referrer})}n.unshift(e);analytics.push(n);return analytics}};for(var n=0;n<analytics.methods.length;n++){var key=analytics.methods[n];analytics[key]=analytics.factory(key)}analytics.load=function(key,n){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.setAttribute("data-global-segment-analytics-key",i);t.src="https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r);analytics._loadOptions=n};analytics._writeKey="bHbADSxnRvrpFMYP6pMNP38JC4J7Av75";;analytics.SNIPPET_VERSION="5.2.0";
-        }}();
+    @media (max-width: 640px){
+      .container{ width:min(1180px, calc(100% - 20px)); }
+      .hero{ padding-top:24px; }
+      .hero-left, .panel-inner{ padding:18px; }
+      .hero-stats{ grid-template-columns:1fr; }
+      .form-row{ grid-template-columns:1fr; }
+      .donor-tools{ flex-direction:column; }
+      .searchbar{ width:100%; }
+    }
+  </style>
+</head>
+<body>
 
-        window._asyncScriptsWaitingLoad = window._asyncScriptsWaitingLoad || [];
-        window._asyncScriptsWaitingLoad.push(() => {
-          // load Segment
-          if (window.analytics) {
-            analytics.load('bHbADSxnRvrpFMYP6pMNP38JC4J7Av75');
-            // Initialize Segment-Amplitude session replay integration after Segment loads
-            if (window.initSegmentAmplitudeIntegration) {
-              window.initSegmentAmplitudeIntegration();
-            }
-          }
-        });
-      }</script><script nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy">// Failed to execute 'removeChild' on 'Node' workaround
-      // https://github.com/facebook/react/issues/11538#issuecomment-417504600
-      (() => {
-        var originalRemoveChild = Node.prototype.removeChild;
-        var originalInsertBefore = Node.prototype.insertBefore;
-        var log;
-        var observer = new MutationObserver(function (event) {
-          if (
-            document.documentElement.className.match('translated') ||
-            // _msttexthash is added to the title when microsoft edge translates a page
-            document.querySelector('title').hasAttribute('_msttexthash')
-          ) {
-            log =
-              window.DD_RUM && window.DD_RUM.addAction
-                ? window.DD_RUM.addAction
-                : (name, data) => console.error(name, data);
-            log('PageTranslate');
-            if (typeof Node === 'function' && Node.prototype) {
-              Node.prototype.removeChild = function (child) {
-                if (child.parentNode !== this) {
-                  log('CustomError', {
-                    errorType: 'removeChild',
-                    child: child,
-                  });
-                  return child;
-                }
-                return originalRemoveChild.apply(this, arguments);
-              };
-              Node.prototype.insertBefore = function (newNode, referenceNode) {
-                if (referenceNode && referenceNode.parentNode !== this) {
-                  log('CustomError', {
-                    errorType: 'insertBefore',
-                    node: referenceNode,
-                  });
-                  return newNode;
-                }
-                return originalInsertBefore.apply(this, arguments);
-              };
-            }
-          } else {
-            log && log('PageUntranslate');
-            Node.prototype.removeChild = originalRemoveChild;
-            Node.prototype.insertBefore = originalInsertBefore;
-          }
-        });
-        // https://stackoverflow.com/a/58891538
-        observer.observe(document.documentElement, {
-          attributes: true,
-          attributeFilter: ['class'],
-          childList: false,
-          characterData: false,
-        });
+  <header class="nav">
+    <div class="container nav-inner">
+      <a class="brand" href="#home">
+        <span class="brand-mark">♥</span>
+        <span>BloodLife</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#donate">Donate</a>
+        <a href="#request">Request</a>
+        <a href="#donors">Donors</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-        // Include observer to detect microsoft edge translations
-        observer.observe(document.querySelector('title'), {
-          attributes: true,
-          attributeFilter: ['_msttexthash'],
-          childList: false,
-          characterData: false,
-        });
-      })();</script><script src="/runtime.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/monitoring.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/containers.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/ui.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/lodash.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/highcharts.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/helpers.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/buildInfo.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/lib.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/actions.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/markdown.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/graphiql.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/relayRouterRedux.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/reactUiUtilities.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/react.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/iso-3166.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/graphql.vendor.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/3158.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script src="/app.bundle.js" nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy"></script><script nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy">// PartnerStacks partner/referral tracking
-      if (
-        window.location.host === 'app.netlify.com'
-      ) {
-        window._asyncScriptsWaitingLoad = window._asyncScriptsWaitingLoad || [];
-        window._asyncScriptsWaitingLoad.push(() => {
-          var gs = document.createElement('script');
-          gs.src = 'https://join.netlify.com/pr/js';
-          gs.type = 'text/javascript';
-          gs.async = 'true';
-          gs.onload = gs.onreadystatechange = function () {
-            var rs = this.readyState;
-            if (rs && rs != 'complete' && rs != 'loaded') return;
-            try {
-              growsumo._initialize('pk_F7MBXU66eGsOfaL4aSFGnB5bV0RuxRDj', [
-                'join.netlify.com',
-                'netlify.partnerlinks.io',
-                'trialco7lrnrzrby4sbrbnetlify.partnerlinks.io',
-              ]);
-              if (typeof growsumoInit === 'function') {
-                growsumoInit();
-              }
-            } catch (e) {}
-          };
-          var s = document.getElementsByTagName('script')[0];
-          s.parentNode.insertBefore(gs, s);
-        });
-      }</script><script nonce="WuWFKNbqFZUJerE9Mu8uYt4FJ5NlIRNy">(() => {
-        // this script adds cnm to the app but only to a percentage of users.
-        // this will enable us to measure users with it on vs off.
-        // Setting to true effectively sets this to 100% without changing any state
-        // that users are currently bucketed into. Setting it back to false will
-        // allow the bucketing to go back to the calculated version
-        let shouldAddCNM = true;
-        try {
-          if (
-            window.location.origin !== 'https://app.netlify.com' &&
-            !window.location.origin.endsWith('--app.netlify.app') &&
-            !window.location.origin.endsWith('--app.netlify.com')
-          ) {
-            return;
-          }
+  <main id="home" class="hero">
+    <div class="container hero-grid">
+      <section class="hero-card hero-left">
+        <span class="eyebrow">🩸 Save a life in minutes</span>
+        <h1>Donate Blood, Save Lives.</h1>
+        <p class="lead">
+          A clean, easy blood donation platform for registering donors, submitting urgent blood requests,
+          and finding nearby volunteers quickly.
+        </p>
 
-          // for consistency of synthetic perf tests. Always include CNM
-          const userAgent = window.navigator.userAgent.toLowerCase();
-          if (
-            userAgent.includes('lighthouse') ||
-            userAgent.includes('speedcurve')
-          ) {
-            shouldAddCNM = true;
-          }
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#donate">Register as Donor</a>
+          <a class="btn btn-secondary" href="#donors">Find Donors</a>
+        </div>
 
-          const alreadyHasResult =
-            shouldAddCNM === true || !!localStorage.getItem('cnm-add-result');
-          if (alreadyHasResult && !shouldAddCNM) {
-            shouldAddCNM = localStorage.getItem('cnm-add-result') === 'true';
-          } else if (!alreadyHasResult) {
-            // 50% rollout
-            shouldAddCNM = Math.random() * 100 > 50;
-            localStorage.setItem('cnm-add-result', shouldAddCNM.toString());
-          }
-          if (shouldAddCNM) {
-            const script = document.createElement('script');
-            script.async = true;
-            script.defer = true;
-            script.src = '/netlify-cnm/cnm.js';
-            document.body.appendChild(script);
-          }
-          if (window.DD_RUM) {
-            DD_RUM.setGlobalContextProperty('use-cnm', shouldAddCNM);
-            DD_RUM.setGlobalContextProperty(
-              'multi-visit-cnm',
-              alreadyHasResult
-            );
-          }
-        } catch (e) {}
+        <div class="hero-stats">
+          <div class="stat">
+            <strong>24/7</strong>
+            <span>Emergency support</span>
+          </div>
+          <div class="stat">
+            <strong>1 Tap</strong>
+            <span>Easy donor search</span>
+          </div>
+          <div class="stat">
+            <strong>Safe</strong>
+            <span>Simple form handling</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="hero-card hero-right">
+        <div class="hero-art">
+          <div class="hero-art-top">
+            <div class="drop"></div>
+            <h3>Every drop matters</h3>
+            <p>
+              Join the donor network, respond to blood requests faster, and support hospitals when time matters most.
+            </p>
+          </div>
+          <div class="pulse-list">
+            <div class="pulse-item">
+              <span class="pulse-dot"></span>
+              <div>
+                <b>Nearby donors</b>
+                <small>Search by blood group and location</small>
+              </div>
+            </div>
+            <div class="pulse-item">
+              <span class="pulse-dot"></span>
+              <div>
+                <b>Fast request form</b>
+                <small>Submit urgent requests in seconds</small>
+              </div>
+            </div>
+            <div class="pulse-item">
+              <span class="pulse-dot"></span>
+              <div>
+                <b>Neat mobile layout</b>
+                <small>Looks good on phone and laptop</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <section class="section" id="donate">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Donor Registration</h2>
+          <p>Register yourself as a blood donor. This form is ready for Netlify Forms.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-inner">
+            <form name="donor-form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="form" id="donorForm">
+              <input type="hidden" name="form-name" value="donor-form" />
+              <p style="display:none;">
+                <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+              </p>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="donorName">Full Name</label>
+                  <input id="donorName" name="name" type="text" placeholder="Enter your name" required />
+                </div>
+                <div class="field">
+                  <label for="bloodGroup">Blood Group</label>
+                  <select id="bloodGroup" name="blood_group" required>
+                    <option value="">Select</option>
+                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                    <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="donorPhone">Phone Number</label>
+                  <input id="donorPhone" name="phone" type="tel" placeholder="10-digit mobile number" required />
+                </div>
+                <div class="field">
+                  <label for="donorCity">Location</label>
+                  <input id="donorCity" name="location" type="text" placeholder="City / Area" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="donorMessage">Availability Notes</label>
+                <textarea id="donorMessage" name="notes" placeholder="Example: Available evenings, near college, willing to travel 10 km."></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Submit Donor Details</button>
+              <p class="helper">Submissions will be stored in Netlify Forms after deployment.</p>
+            </form>
+          </div>
+        </div>
+
+        <div class="notice">
+          <h3>Emergency Blood Request</h3>
+          <p>
+            Use this section for urgent blood needs. Share patient details, hospital, and blood group required.
+          </p>
+          <a href="#request" class="btn btn-secondary">Go to Request Form</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="request">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Blood Request Form</h2>
+          <p>Submit a request for a patient and notify your network quickly.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <form name="request-form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="requestForm">
+            <input type="hidden" name="form-name" value="request-form" />
+            <p style="display:none;">
+              <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
+            </p>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="patientName">Patient Name</label>
+                <input id="patientName" name="patient_name" type="text" placeholder="Enter patient name" required />
+              </div>
+              <div class="field">
+                <label for="needGroup">Blood Group Needed</label>
+                <select id="needGroup" name="blood_needed" required>
+                  <option value="">Select</option>
+                  <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                  <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="field">
+                <label for="hospital">Hospital / Clinic</label>
+                <input id="hospital" name="hospital" type="text" placeholder="Hospital name" required />
+              </div>
+              <div class="field">
+                <label for="urgency">Urgency</label>
+                <select id="urgency" name="urgency" required>
+                  <option value="">Select</option>
+                  <option>Immediate</option>
+                  <option>Within 24 hours</option>
+                  <option>Later today</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="requestDetails">Extra Details</label>
+              <textarea id="requestDetails" name="details" placeholder="Include contact info, location, and other important notes."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit Blood Request</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="donors">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Available Donors</h2>
+          <p>Search and filter sample donors by blood group and location. You can later connect this to a real database.</p>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:18px;">
+        <div class="panel-inner">
+          <div class="donor-tools">
+            <div class="searchbar">
+              <input id="searchInput" type="text" placeholder="Search by name or location..." />
+              <button class="btn btn-primary" type="button" id="searchBtn">Search</button>
+            </div>
+            <button class="btn btn-secondary" type="button" id="clearBtn">Clear</button>
+          </div>
+
+          <div class="chip-row" id="chips">
+            <button class="chip active" data-filter="all" type="button">All</button>
+            <button class="chip" data-filter="A+" type="button">A+</button>
+            <button class="chip" data-filter="B+" type="button">B+</button>
+            <button class="chip" data-filter="O+" type="button">O+</button>
+            <button class="chip" data-filter="AB+" type="button">AB+</button>
+            <button class="chip" data-filter="O-" type="button">O-</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" id="donorGrid">
+        <article class="donor-card" data-group="A+" data-text="srikanth marathahalli bangalore">
+          <div class="donor-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar">S</div>
+              <div>
+                <h3>Srikanth</h3>
+                <div class="meta">Bangalore</div>
+              </div>
+            </div>
+            <span class="blood-pill">A+</span>
+          </div>
+          <div class="meta">
+            <div><b>Phone:</b> +91 98765 43210</div>
+            <div><b>Status:</b> Available evenings</div>
+          </div>
+        </article>
+
+        <article class="donor-card" data-group="O+" data-text="anjali mysore">
+          <div class="donor-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar">A</div>
+              <div>
+                <h3>Anjali</h3>
+                <div class="meta">Mysore</div>
+              </div>
+            </div>
+            <span class="blood-pill">O+</span>
+          </div>
+          <div class="meta">
+            <div><b>Phone:</b> +91 91234 56780</div>
+            <div><b>Status:</b> Ready on call</div>
+          </div>
+        </article>
+
+        <article class="donor-card" data-group="B+" data-text="rahul hubli">
+          <div class="donor-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar">R</div>
+              <div>
+                <h3>Rahul</h3>
+                <div class="meta">Hubli</div>
+              </div>
+            </div>
+            <span class="blood-pill">B+</span>
+          </div>
+          <div class="meta">
+            <div><b>Phone:</b> +91 99887 76655</div>
+            <div><b>Status:</b> Can travel nearby</div>
+          </div>
+        </article>
+
+        <article class="donor-card" data-group="AB+" data-text="divya chennai">
+          <div class="donor-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar">D</div>
+              <div>
+                <h3>Divya</h3>
+                <div class="meta">Chennai</div>
+              </div>
+            </div>
+            <span class="blood-pill">AB+</span>
+          </div>
+          <div class="meta">
+            <div><b>Phone:</b> +91 90000 11223</div>
+            <div><b>Status:</b> Verified donor</div>
+          </div>
+        </article>
+
+        <article class="donor-card" data-group="O-" data-text="naveen kochi">
+          <div class="donor-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar">N</div>
+              <div>
+                <h3>Naveen</h3>
+                <div class="meta">Kochi</div>
+              </div>
+            </div>
+            <span class="blood-pill">O-</span>
+          </div>
+          <div class="meta">
+            <div><b>Phone:</b> +91 95555 12345</div>
+            <div><b>Status:</b> Emergency contact</div>
+          </div>
+        </article>
+
+        <article class="donor-card" data-group="A+" data-text="pavithra bangalore">
+          <div class="donor-top">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="avatar">P</div>
+              <div>
+                <h3>Pavithra</h3>
+                <div class="meta">Bangalore</div>
+              </div>
+            </div>
+            <span class="blood-pill">A+</span>
+          </div>
+          <div class="meta">
+            <div><b>Phone:</b> +91 94444 77889</div>
+            <div><b>Status:</b> Available weekends</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>Frequently Asked Questions</h2>
+          <p>Short answers for common questions about donation and requests.</p>
+        </div>
+      </div>
+
+      <div class="faq">
+        <details>
+          <summary>How does this website store donor data?</summary>
+          <p>It uses Netlify Forms for simple form submission storage after deployment. That is enough for a working college project.</p>
+        </details>
+        <details>
+          <summary>Can I add real database later?</summary>
+          <p>Yes. You can connect Firebase, Supabase, or a Node.js backend with Neon/PostgreSQL later if your project needs a database.</p>
+        </details>
+        <details>
+          <summary>Will it work on mobile?</summary>
+          <p>Yes. The layout is fully responsive and automatically adjusts for phone, tablet, and desktop screens.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-inner">
+            <h2 style="margin-top:0;">Contact</h2>
+            <p class="helper" style="margin-top:0;">
+              Need urgent help? Share your details and message here.
+            </p>
+
+            <form name="contact-form" method="POST" data-netlify="true" id="contactForm">
+              <input type="hidden" name="form-name" value="contact-form" />
+
+              <div class="form-row">
+                <div class="field">
+                  <label for="contactName">Name</label>
+                  <input id="contactName" type="text" name="name" required />
+                </div>
+                <div class="field">
+                  <label for="contactPhone">Phone</label>
+                  <input id="contactPhone" type="tel" name="phone" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="contactMsg">Message</label>
+                <textarea id="contactMsg" name="message" placeholder="Write your message..." required></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="notice">
+          <h3>Project Tip</h3>
+          <p>
+            For a DBMS explanation, tell your teacher that the site stores form submissions through Netlify Forms,
+            and later can be upgraded to a real database like Neon or Firebase.
+          </p>
+          <a class="btn btn-secondary" href="#home">Back to top</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      Made with ❤️ for blood donation awareness.
+    </div>
+  </footer>
+
+  <div class="toast" id="toast">Form submitted successfully!</div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    const showToast = (msg) => {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    };
+
+    function handleForm(form){
+      form.addEventListener('submit', () => {
+        showToast('Submitting... Your details are being sent.');
+      });
+    }
+
+    handleForm(document.getElementById('donorForm'));
+    handleForm(document.getElementById('requestForm'));
+    handleForm(document.getElementById('contactForm'));
+
+    const chips = document.querySelectorAll('.chip');
+    const cards = document.querySelectorAll('.donor-card');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const clearBtn = document.getElementById('clearBtn');
+
+    let activeFilter = 'all';
+
+    function applyFilters(){
+      const term = searchInput.value.trim().toLowerCase();
+
+      cards.forEach(card => {
+        const group = card.dataset.group;
+        const text = card.dataset.text;
+        const matchGroup = activeFilter === 'all' || group === activeFilter;
+        const matchTerm = !term || text.includes(term);
+        card.style.display = (matchGroup && matchTerm) ? '' : 'none';
+      });
+    }
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilter = chip.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    searchBtn.addEventListener('click', applyFilters);
+    searchInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') applyFilters();
+      if (searchInput.value.trim() === '') applyFilters();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      activeFilter = 'all';
+      chips.forEach(c => c.classList.remove('active'));
+      document.querySelector('[data-filter="all"]').classList.add('active');
+      applyFilters();
+    });
+  </script>
+</body>
+</html>
