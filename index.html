@@ -6,6 +6,8 @@
   <title>BloodLife — Donate Blood, Save Lives</title>
   <meta name="description" content="A modern blood donation website with donor registration, blood request form, and donor search." />
 
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <style>
     :root{
       --bg:#fff7f7;
@@ -534,7 +536,6 @@
         <a href="#donate">Donate</a>
         <a href="#request">Request</a>
         <a href="#donors">Donors</a>
-        <a href="#faq">FAQ</a>
         <a href="#contact">Contact</a>
       </nav>
     </div>
@@ -613,18 +614,15 @@
       <div class="section-head">
         <div>
           <h2>Donor Registration</h2>
-          <p>Register yourself as a blood donor. This form is ready for Netlify Forms.</p>
+          <p>Register yourself as a blood donor. Connect this form to Supabase to store donor data.</p>
         </div>
       </div>
 
       <div class="grid-2">
         <div class="panel">
           <div class="panel-inner">
-            <form name="donor-form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" class="form" id="donorForm">
-              <input type="hidden" name="form-name" value="donor-form" />
-              <p style="display:none;">
-                <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
-              </p>
+            <form name="donor-form" class="form" id="donorForm">
+              <!-- Form data will be sent to Supabase -->
 
               <div class="form-row">
                 <div class="field">
@@ -658,7 +656,7 @@
               </div>
 
               <button type="submit" class="btn btn-primary">Submit Donor Details</button>
-              <p class="helper">Submissions will be stored in Netlify Forms after deployment.</p>
+              <p class="helper">Submissions will be saved to your Supabase database after connecting.</p>
             </form>
           </div>
         </div>
@@ -685,11 +683,8 @@
 
       <div class="panel">
         <div class="panel-inner">
-          <form name="request-form" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" id="requestForm">
-            <input type="hidden" name="form-name" value="request-form" />
-            <p style="display:none;">
-              <label>Don’t fill this out if you’re human: <input name="bot-field" /></label>
-            </p>
+          <form name="request-form" id="requestForm">
+            <!-- Form data will be sent to Supabase -->
 
             <div class="form-row">
               <div class="field">
@@ -870,31 +865,7 @@
     </div>
   </section>
 
-  <section class="section" id="faq">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <h2>Frequently Asked Questions</h2>
-          <p>Short answers for common questions about donation and requests.</p>
-        </div>
-      </div>
 
-      <div class="faq">
-        <details>
-          <summary>How does this website store donor data?</summary>
-          <p>It uses Netlify Forms for simple form submission storage after deployment. That is enough for a working college project.</p>
-        </details>
-        <details>
-          <summary>Can I add real database later?</summary>
-          <p>Yes. You can connect Firebase, Supabase, or a Node.js backend with Neon/PostgreSQL later if your project needs a database.</p>
-        </details>
-        <details>
-          <summary>Will it work on mobile?</summary>
-          <p>Yes. The layout is fully responsive and automatically adjusts for phone, tablet, and desktop screens.</p>
-        </details>
-      </div>
-    </div>
-  </section>
 
   <section class="section" id="contact">
     <div class="container">
@@ -906,8 +877,8 @@
               Need urgent help? Share your details and message here.
             </p>
 
-            <form name="contact-form" method="POST" data-netlify="true" id="contactForm">
-              <input type="hidden" name="form-name" value="contact-form" />
+            <form name="contact-form" id="contactForm">
+              <!-- Form data will be sent to Supabase -->
 
               <div class="form-row">
                 <div class="field">
@@ -949,67 +920,119 @@
 
   <div class="toast" id="toast">Form submitted successfully!</div>
 
-  <script>
-    const toast = document.getElementById('toast');
-    const showToast = (msg) => {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
-    };
+ <script>
+  const SUPABASE_URL = 'https://ujumykscucppmwfgdrmp.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVqdW15a3NjdWNwcG13Zmdkcm1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjc4MjgsImV4cCI6MjA4OTg0MzgyOH0.IXR_e9JOfm5RYCqPXcGZWS1gj3ZIyOKHFr8WrieL1Gg';
 
-    function handleForm(form){
-      form.addEventListener('submit', () => {
-        showToast('Submitting... Your details are being sent.');
-      });
+  const { createClient } = supabase;
+  const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const toast = document.getElementById('toast');
+
+  const showToast = (msg) => {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+  };
+
+  async function saveToSupabase(tableName, payload) {
+    const { error } = await supabaseClient.from(tableName).insert([payload]);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      showToast('Error: ' + error.message);
+      return false;
     }
 
-    handleForm(document.getElementById('donorForm'));
-    handleForm(document.getElementById('requestForm'));
-    handleForm(document.getElementById('contactForm'));
+    return true;
+  }
 
-    const chips = document.querySelectorAll('.chip');
-    const cards = document.querySelectorAll('.donor-card');
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const clearBtn = document.getElementById('clearBtn');
+  function handleForm(form, tableName, transform = (data) => data) {
+    if (!form) return;
 
-    let activeFilter = 'all';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showToast('Submitting...');
 
-    function applyFilters(){
-      const term = searchInput.value.trim().toLowerCase();
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const oldText = submitBtn ? submitBtn.textContent : '';
 
-      cards.forEach(card => {
-        const group = card.dataset.group;
-        const text = card.dataset.text;
-        const matchGroup = activeFilter === 'all' || group === activeFilter;
-        const matchTerm = !term || text.includes(term);
-        card.style.display = (matchGroup && matchTerm) ? '' : 'none';
-      });
-    }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+      }
 
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        activeFilter = chip.dataset.filter;
-        applyFilters();
-      });
+      try {
+        const formData = new FormData(form);
+        const data = transform(Object.fromEntries(formData));
+
+        console.log('Sending to', tableName, data);
+
+        const success = await saveToSupabase(tableName, data);
+        if (success) {
+          showToast('Submitted successfully!');
+          form.reset();
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Unexpected error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = oldText;
+        }
+      }
     });
+  }
 
-    searchBtn.addEventListener('click', applyFilters);
-    searchInput.addEventListener('keyup', (e) => {
-      if (e.key === 'Enter') applyFilters();
-      if (searchInput.value.trim() === '') applyFilters();
+  handleForm(document.getElementById('donorForm'), 'donors');
+  handleForm(document.getElementById('requestForm'), 'blood_requests');
+  handleForm(document.getElementById('contactForm'), 'contacts');
+
+  const chips = document.querySelectorAll('.chip');
+  const cards = document.querySelectorAll('.donor-card');
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+  const clearBtn = document.getElementById('clearBtn');
+
+  let activeFilter = 'all';
+
+  function applyFilters() {
+    const term = searchInput.value.trim().toLowerCase();
+
+    cards.forEach(card => {
+      const group = card.dataset.group;
+      const text = card.dataset.text;
+      const matchGroup = activeFilter === 'all' || group === activeFilter;
+      const matchTerm = !term || text.includes(term);
+      card.style.display = (matchGroup && matchTerm) ? '' : 'none';
     });
+  }
 
-    clearBtn.addEventListener('click', () => {
-      searchInput.value = '';
-      activeFilter = 'all';
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('active'));
-      document.querySelector('[data-filter="all"]').classList.add('active');
+      chip.classList.add('active');
+      activeFilter = chip.dataset.filter;
       applyFilters();
     });
-  </script>
+  });
+
+  searchBtn.addEventListener('click', applyFilters);
+
+  searchInput.addEventListener('keyup', (e) => {
+    if (e.key === 'Enter') applyFilters();
+    if (searchInput.value.trim() === '') applyFilters();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    activeFilter = 'all';
+    chips.forEach(c => c.classList.remove('active'));
+    document.querySelector('[data-filter="all"]').classList.add('active');
+    applyFilters();
+  });
+</script>
 </body>
 </html>
