@@ -734,7 +734,7 @@
       <div class="section-head">
         <div>
           <h2>Available Donors</h2>
-          <p>Search and filter sample donors by blood group and location. You can later connect this to a real database.</p>
+          <p>Search and filter donors by blood group and location. Connected to Supabase database.</p>
         </div>
       </div>
 
@@ -742,7 +742,7 @@
         <div class="panel-inner">
           <div class="donor-tools">
             <div class="searchbar">
-              <input id="searchInput" type="text" placeholder="Search by name or location..." />
+              <input id="searchInput" type="text" placeholder="Search by blood group or location..." />
               <button class="btn btn-primary" type="button" id="searchBtn">Search</button>
             </div>
             <button class="btn btn-secondary" type="button" id="clearBtn">Clear</button>
@@ -760,107 +760,7 @@
       </div>
 
       <div class="grid-3" id="donorGrid">
-        <article class="donor-card" data-group="A+" data-text="srikanth marathahalli bangalore">
-          <div class="donor-top">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="avatar">S</div>
-              <div>
-                <h3>Srikanth</h3>
-                <div class="meta">Bangalore</div>
-              </div>
-            </div>
-            <span class="blood-pill">A+</span>
-          </div>
-          <div class="meta">
-            <div><b>Phone:</b> +91 98765 43210</div>
-            <div><b>Status:</b> Available evenings</div>
-          </div>
-        </article>
-
-        <article class="donor-card" data-group="O+" data-text="anjali mysore">
-          <div class="donor-top">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="avatar">A</div>
-              <div>
-                <h3>Anjali</h3>
-                <div class="meta">Mysore</div>
-              </div>
-            </div>
-            <span class="blood-pill">O+</span>
-          </div>
-          <div class="meta">
-            <div><b>Phone:</b> +91 91234 56780</div>
-            <div><b>Status:</b> Ready on call</div>
-          </div>
-        </article>
-
-        <article class="donor-card" data-group="B+" data-text="rahul hubli">
-          <div class="donor-top">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="avatar">R</div>
-              <div>
-                <h3>Rahul</h3>
-                <div class="meta">Hubli</div>
-              </div>
-            </div>
-            <span class="blood-pill">B+</span>
-          </div>
-          <div class="meta">
-            <div><b>Phone:</b> +91 99887 76655</div>
-            <div><b>Status:</b> Can travel nearby</div>
-          </div>
-        </article>
-
-        <article class="donor-card" data-group="AB+" data-text="divya chennai">
-          <div class="donor-top">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="avatar">D</div>
-              <div>
-                <h3>Divya</h3>
-                <div class="meta">Chennai</div>
-              </div>
-            </div>
-            <span class="blood-pill">AB+</span>
-          </div>
-          <div class="meta">
-            <div><b>Phone:</b> +91 90000 11223</div>
-            <div><b>Status:</b> Verified donor</div>
-          </div>
-        </article>
-
-        <article class="donor-card" data-group="O-" data-text="naveen kochi">
-          <div class="donor-top">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="avatar">N</div>
-              <div>
-                <h3>Naveen</h3>
-                <div class="meta">Kochi</div>
-              </div>
-            </div>
-            <span class="blood-pill">O-</span>
-          </div>
-          <div class="meta">
-            <div><b>Phone:</b> +91 95555 12345</div>
-            <div><b>Status:</b> Emergency contact</div>
-          </div>
-        </article>
-
-        <article class="donor-card" data-group="A+" data-text="pavithra bangalore">
-          <div class="donor-top">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="avatar">P</div>
-              <div>
-                <h3>Pavithra</h3>
-                <div class="meta">Bangalore</div>
-              </div>
-            </div>
-            <span class="blood-pill">A+</span>
-          </div>
-          <div class="meta">
-            <div><b>Phone:</b> +91 94444 77889</div>
-            <div><b>Status:</b> Available weekends</div>
-          </div>
-        </article>
+        <!-- Donor cards will be dynamically generated here -->
       </div>
     </div>
   </section>
@@ -986,30 +886,81 @@
     });
   }
 
-  handleForm(document.getElementById('donorForm'), 'donors');
+  handleForm(document.getElementById('donorForm'), 'donors', (data) => {
+    const { notes, ...rest } = data; // Remove notes since table doesn't have this column
+    return rest;
+  });
   handleForm(document.getElementById('requestForm'), 'blood_requests');
   handleForm(document.getElementById('contactForm'), 'contacts');
 
+  // Donor management variables
+  let allDonors = [];
+  let activeFilter = 'all';
+
+  // Fetch donors from Supabase
+  async function loadDonors() {
+    const { data, error } = await supabaseClient.from('donors').select('id, name, blood_group, phone, location');
+    if (error) {
+      console.error('Error loading donors:', error);
+      showToast('Error loading donors');
+      return;
+    }
+    allDonors = data || [];
+    console.log('Loaded donors:', allDonors); // Debug log
+    renderDonors(allDonors);
+  }
+
+  // Render donor cards dynamically
+  function renderDonors(donors) {
+    console.log('Rendering donors:', donors.length, 'donors');
+    const grid = document.getElementById('donorGrid');
+    if (!grid) {
+      console.error('donorGrid element not found');
+      return;
+    }
+    grid.innerHTML = '';
+    donors.forEach(donor => {
+      const card = document.createElement('article');
+      card.className = 'donor-card';
+      card.dataset.group = donor.blood_group;
+      card.dataset.text = `${donor.blood_group} ${donor.location}`.toLowerCase();
+      card.innerHTML = `
+        <div class="donor-top">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="avatar">${donor.name.charAt(0).toUpperCase()}</div>
+            <div>
+              <h3>${donor.name}</h3>
+              <div class="meta">${donor.location}</div>
+            </div>
+          </div>
+          <span class="blood-pill">${donor.blood_group}</span>
+        </div>
+        <div class="meta">
+          <div><b>Phone:</b> ${donor.phone}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    console.log('Rendered', donors.length, 'donor cards');
+  }
+
+  // Apply search and filter
+  function applyFilters() {
+    const term = searchInput.value.trim().toLowerCase();
+    let filtered = allDonors.filter(donor => {
+      const matchGroup = activeFilter === 'all' || donor.blood_group === activeFilter;
+      const matchTerm = !term || `${donor.blood_group} ${donor.location}`.toLowerCase().includes(term);
+      return matchGroup && matchTerm;
+    });
+    renderDonors(filtered);
+  }
+
   const chips = document.querySelectorAll('.chip');
-  const cards = document.querySelectorAll('.donor-card');
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
   const clearBtn = document.getElementById('clearBtn');
 
-  let activeFilter = 'all';
-
-  function applyFilters() {
-    const term = searchInput.value.trim().toLowerCase();
-
-    cards.forEach(card => {
-      const group = card.dataset.group;
-      const text = card.dataset.text;
-      const matchGroup = activeFilter === 'all' || group === activeFilter;
-      const matchTerm = !term || text.includes(term);
-      card.style.display = (matchGroup && matchTerm) ? '' : 'none';
-    });
-  }
-
+  // Event listeners for chips
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
       chips.forEach(c => c.classList.remove('active'));
@@ -1019,13 +970,14 @@
     });
   });
 
+  // Event listeners for search
   searchBtn.addEventListener('click', applyFilters);
-
   searchInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') applyFilters();
     if (searchInput.value.trim() === '') applyFilters();
   });
 
+  // Clear button
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
     activeFilter = 'all';
@@ -1033,6 +985,9 @@
     document.querySelector('[data-filter="all"]').classList.add('active');
     applyFilters();
   });
+
+  // Load donors on page load
+  window.addEventListener('DOMContentLoaded', loadDonors);
 </script>
 </body>
 </html>
