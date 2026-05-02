@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BloodLife — Donate Blood, Save Lives</title>
   <meta name="description" content="A modern blood donation website with donor registration, blood request form, and donor search." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script>
+    window.chtlConfig = { chatbotId: "4384523513" }
+  </script>
 
   <style>
     :root{
@@ -501,6 +506,78 @@
       transform: translateY(0);
     }
 
+    .chat-toggle{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      width:60px;
+      height:60px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),#ff4d4d);
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-size:26px;
+      cursor:pointer;
+      z-index:120;
+      box-shadow: 0 12px 24px rgba(214,40,40,.35);
+    }
+    .chat-panel{
+      position:fixed;
+      right:20px;
+      bottom:90px;
+      width:min(360px, calc(100vw - 32px));
+      max-height:520px;
+      border-radius:18px;
+      border:1px solid rgba(212, 38, 38, .2);
+      background:#fff;
+      box-shadow: 0 24px 48px rgba(0,0,0,.2);
+      z-index:120;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      transform: translateY(10px);
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+    }
+    .chat-panel.open{
+      transform: translateY(0);
+      opacity:1;
+      pointer-events:auto;
+    }
+    .chat-header{
+      padding:12px 14px;
+      border-bottom:1px solid #eee;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .chat-header strong{ font-size:1rem; }
+    .chat-header small{ display:block; color:#6b7280; font-size:.8rem; }
+    .chat-close{ border:none; background:transparent; font-size:22px; color:#6b7280; cursor:pointer; }
+    .chat-body{ flex:1; padding:12px; display:flex; flex-direction:column; gap:10px; overflow-y:auto; }
+    .chat-footer{ padding:10px; border-top:1px solid #eee; display:flex; gap:8px; }
+    .chat-footer input{ flex:1; border:1px solid #dedede; border-radius:999px; padding:10px 14px; outline:none; }
+    .chat-footer button{ border:none; background:var(--primary); color:#fff; border-radius:999px; padding:10px 14px; cursor:pointer; font-weight:700; }
+
+    .message{ max-width:82%; line-height:1.45; padding:10px 12px; border-radius:14px; font-size:.92rem; box-shadow: 0 10px 20px rgba(0,0,0,.06); }
+    .message.bot{ background:#f3f4f6; color:#111827; align-self:flex-start; }
+    .message.user{ background:linear-gradient(135deg, var(--primary), #ff4d4d); color:#fff; align-self:flex-end; }
+
+    .typing-indicator{ display:flex; align-items:center; gap:4px; color:#6b7280; font-size:.82rem; }
+    .typing-indicator span{ display:inline-block; width:6px; height:6px; border-radius:50%; background:#6b7280; animation:dot 1s infinite; }
+    .typing-indicator span:nth-child(2){ animation-delay:.15s; }
+    .typing-indicator span:nth-child(3){ animation-delay:.3s; }
+    @keyframes dot{ 0%, 80%, 100% { opacity:0.1; transform: translateY(0);} 40% { opacity:1; transform: translateY(-2px);} }
+
+    .popup{ position:fixed; right:20px; top:20px; background:#fff; border:1px solid rgba(214,40,40,.24); box-shadow:0 18px 48px rgba(0,0,0,.22); border-radius:16px; padding:16px 18px; width:min(340px,calc(100vw - 36px)); z-index:125; display:none; }
+    .popup.show{ display:block; }
+    .popup h4{ margin:0 0 8px; }
+    .popup p{ margin:0 0 12px; color:#374151; }
+    .popup button{ border:none; background:var(--primary); color:#fff; padding:8px 12px; border-radius:999px; cursor:pointer; }
+
     @media (max-width: 980px){
       .hero-grid, .grid-2, .grid-3{
         grid-template-columns: 1fr;
@@ -614,7 +691,7 @@
       <div class="section-head">
         <div>
           <h2>Donor Registration</h2>
-          <p>Register yourself as a blood donor. Connect this form to Supabase to store donor data.</p>
+          <p>Register yourself as a blood donor.</p>
         </div>
       </div>
 
@@ -734,7 +811,7 @@
       <div class="section-head">
         <div>
           <h2>Available Donors</h2>
-          <p>Search and filter donors by blood group and location. Connected to Supabase database.</p>
+          <p>Search and filter sample donors by blood group and location. You can later connect this to a real database.</p>
         </div>
       </div>
 
@@ -742,7 +819,7 @@
         <div class="panel-inner">
           <div class="donor-tools">
             <div class="searchbar">
-              <input id="searchInput" type="text" placeholder="Search by blood group or location..." />
+              <input id="searchInput" type="text" placeholder="Search by name or location..." />
               <button class="btn btn-primary" type="button" id="searchBtn">Search</button>
             </div>
             <button class="btn btn-secondary" type="button" id="clearBtn">Clear</button>
@@ -818,9 +895,16 @@
     </div>
   </footer>
 
+  <div class="popup" id="successPopup">
+    <h4>Success</h4>
+    <p>Thank you for registering as a blood donor ❤️ You are saving lives!</p>
+    <button id="closePopup">Close</button>
+  </div>
+
   <div class="toast" id="toast">Form submitted successfully!</div>
 
  <script>
+  const BACKEND_URL = 'http://localhost:3000';
   const SUPABASE_URL = 'https://ujumykscucppmwfgdrmp.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVqdW15a3NjdWNwcG13Zmdkcm1wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyNjc4MjgsImV4cCI6MjA4OTg0MzgyOH0.IXR_e9JOfm5RYCqPXcGZWS1gj3ZIyOKHFr8WrieL1Gg';
 
@@ -828,6 +912,8 @@
   const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   const toast = document.getElementById('toast');
+  const successPopup = document.getElementById('successPopup');
+  const closePopup = document.getElementById('closePopup');
 
   const showToast = (msg) => {
     toast.textContent = msg;
@@ -836,19 +922,46 @@
     window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
   };
 
+  const showSuccessPopup = () => {
+    successPopup.classList.add('show');
+    setTimeout(() => successPopup.classList.remove('show'), 4200);
+  };
+
+  closePopup.addEventListener('click', () => {
+    successPopup.classList.remove('show');
+  });
+
   async function saveToSupabase(tableName, payload) {
     const { error } = await supabaseClient.from(tableName).insert([payload]);
-
     if (error) {
       console.error('Supabase error:', error);
       showToast('Error: ' + error.message);
       return false;
     }
-
     return true;
   }
 
-  function handleForm(form, tableName, transform = (data) => data) {
+  async function triggerBackendDonorNotification(payload) {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/donors`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        console.warn('Backend donor route issues:', result);
+        return false;
+      }
+      console.log('Backend donor route:', result.message);
+      return true;
+    } catch (err) {
+      console.warn('Backend donor call failed:', err);
+      return false;
+    }
+  }
+
+  function handleForm(form, tableName, transform = (data) => data, afterSuccess = null) {
     if (!form) return;
 
     form.addEventListener('submit', async (e) => {
@@ -868,11 +981,15 @@
         const data = transform(Object.fromEntries(formData));
 
         console.log('Sending to', tableName, data);
-
         const success = await saveToSupabase(tableName, data);
+
         if (success) {
           showToast('Submitted successfully!');
           form.reset();
+
+          if (afterSuccess) {
+            await afterSuccess(data);
+          }
         }
       } catch (err) {
         console.error(err);
@@ -886,70 +1003,61 @@
     });
   }
 
-  handleForm(document.getElementById('donorForm'), 'donors', (data) => {
-    const { notes, ...rest } = data; // Remove notes since table doesn't have this column
-    return rest;
+  handleForm(document.getElementById('donorForm'), 'donors', (data) => data, async (data) => {
+    await triggerBackendDonorNotification(data);
+    showSuccessPopup();
   });
+
   handleForm(document.getElementById('requestForm'), 'blood_requests');
   handleForm(document.getElementById('contactForm'), 'contacts');
 
-  // Donor management variables
   let allDonors = [];
   let activeFilter = 'all';
 
-  // Fetch donors from Supabase
   async function loadDonors() {
-    const { data, error } = await supabaseClient.from('donors').select('id, name, blood_group, phone, location');
+    const { data, error } = await supabaseClient.from('donors').select('*');
     if (error) {
       console.error('Error loading donors:', error);
       showToast('Error loading donors');
       return;
     }
     allDonors = data || [];
-    console.log('Loaded donors:', allDonors); // Debug log
     renderDonors(allDonors);
   }
 
-  // Render donor cards dynamically
   function renderDonors(donors) {
-    console.log('Rendering donors:', donors.length, 'donors');
     const grid = document.getElementById('donorGrid');
-    if (!grid) {
-      console.error('donorGrid element not found');
-      return;
-    }
     grid.innerHTML = '';
-    donors.forEach(donor => {
+    donors.forEach((donor) => {
       const card = document.createElement('article');
       card.className = 'donor-card';
       card.dataset.group = donor.blood_group;
-      card.dataset.text = `${donor.blood_group} ${donor.location}`.toLowerCase();
+      card.dataset.text = `${donor.name} ${donor.city || donor.location || ''}`.toLowerCase();
       card.innerHTML = `
         <div class="donor-top">
           <div style="display:flex;align-items:center;gap:12px;">
-            <div class="avatar">${donor.name.charAt(0).toUpperCase()}</div>
+            <div class="avatar">${(donor.name || 'D').charAt(0).toUpperCase()}</div>
             <div>
               <h3>${donor.name}</h3>
-              <div class="meta">${donor.location}</div>
+              <div class="meta">${donor.city || donor.location || 'N/A'}</div>
             </div>
           </div>
           <span class="blood-pill">${donor.blood_group}</span>
         </div>
         <div class="meta">
-          <div><b>Phone:</b> ${donor.phone}</div>
+          <div><b>Phone:</b> ${donor.phone || 'N/A'}</div>
+          <div><b>Status:</b> ${donor.status || 'Ready'}</div>
         </div>
       `;
       grid.appendChild(card);
     });
-    console.log('Rendered', donors.length, 'donor cards');
   }
 
-  // Apply search and filter
   function applyFilters() {
     const term = searchInput.value.trim().toLowerCase();
-    let filtered = allDonors.filter(donor => {
+    const filtered = allDonors.filter((donor) => {
       const matchGroup = activeFilter === 'all' || donor.blood_group === activeFilter;
-      const matchTerm = !term || `${donor.blood_group} ${donor.location}`.toLowerCase().includes(term);
+      const matchTerm = !term || `${donor.name} ${donor.city || donor.location || ''}`.toLowerCase().includes(term);
       return matchGroup && matchTerm;
     });
     renderDonors(filtered);
@@ -960,34 +1068,34 @@
   const searchBtn = document.getElementById('searchBtn');
   const clearBtn = document.getElementById('clearBtn');
 
-  // Event listeners for chips
-  chips.forEach(chip => {
+  chips.forEach((chip) => {
     chip.addEventListener('click', () => {
-      chips.forEach(c => c.classList.remove('active'));
+      chips.forEach((c) => c.classList.remove('active'));
       chip.classList.add('active');
       activeFilter = chip.dataset.filter;
       applyFilters();
     });
   });
 
-  // Event listeners for search
   searchBtn.addEventListener('click', applyFilters);
   searchInput.addEventListener('keyup', (e) => {
     if (e.key === 'Enter') applyFilters();
     if (searchInput.value.trim() === '') applyFilters();
   });
 
-  // Clear button
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
     activeFilter = 'all';
-    chips.forEach(c => c.classList.remove('active'));
+    chips.forEach((c) => c.classList.remove('active'));
     document.querySelector('[data-filter="all"]').classList.add('active');
     applyFilters();
   });
 
-  // Load donors on page load
-  window.addEventListener('DOMContentLoaded', loadDonors);
+  window.addEventListener('DOMContentLoaded', () => {
+    loadDonors();
+  });
 </script>
+
+<script async data-id="4384523513" id="chtl-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
 </body>
 </html>
